@@ -4,6 +4,7 @@ import { db } from "./src";
 import { users } from "./src/db/schema";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
+
 export async function createUser(formData: FormData) {
   const email = formData.get("email")?.toString();
 
@@ -13,7 +14,7 @@ export async function createUser(formData: FormData) {
     .where(eq(users.email, email!))
     .limit(1);
   if (existingUser.length > 0) {
-    return false;
+    return;
   }
 
   const password = formData.get("password")?.toString();

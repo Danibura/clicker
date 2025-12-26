@@ -1,5 +1,3 @@
-"use server";
-
 import React from "react";
 import { loginUser } from "@/actions";
 import Link from "next/link";
@@ -34,7 +32,7 @@ const Page = async () => {
         </form>
       </div>
       <div className="text-xl mt-6">
-        Don't have an account yet?
+        Don&apos;t have an account yet?
         <Link href="/signup" className="font-extrabold ml-2">
           Sign up
         </Link>

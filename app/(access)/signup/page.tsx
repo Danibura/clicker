@@ -1,4 +1,3 @@
-"use server";
 
 import React from "react";
 import { createUser } from "@/actions";
