@@ -1,12 +1,25 @@
+"use client";
 
 import React from "react";
 import { createUser } from "@/actions";
 import Link from "next/link";
-const Page = async () => {
+import { useFormState } from "react-dom";
+import Result from "@/components/Result";
+
+const initialState = {
+  success: false,
+  message: "",
+};
+
+
+
+const Page = () => {
+  const [state, formAction] = useFormState(createUser, initialState);
+
   return (
     <div className="items-center  min-h-screen align-center justify-center flex flex-col">
       <div className="border border-amber-50 p-10 rounded-xl">
-        <form action={createUser}>
+        <form action={formAction}>
           <h1 className="text-4xl font-semibold">Signup</h1>
           <h3 className="text-2xl mt-7">Email</h3>
           <input
@@ -14,6 +27,7 @@ const Page = async () => {
             name="email"
             className="border border-amber-50 mt-2 text-lg p-2 rounded-lg"
             placeholder="Password"
+            required
           />
           <h3 className="text-2xl mt-5">Password</h3>
           <input
@@ -21,6 +35,7 @@ const Page = async () => {
             name="password"
             className="border border-amber-50 mt-2 text-lg p-2 rounded-lg"
             placeholder="Password"
+            required
           />
           <br />
           <button
@@ -31,6 +46,7 @@ const Page = async () => {
           </button>
         </form>
       </div>
+      <Result success={state.success} message={state.message}/>
       <div className="text-xl mt-6">
         Already have an account?
         <Link href="/login" className="font-extrabold ml-2">
