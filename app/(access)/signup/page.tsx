@@ -1,57 +1,93 @@
 "use client";
 
-import React from "react";
-import { createUser } from "@/actions";
+import { useState } from "react";
+
 import Link from "next/link";
-import { useFormState } from "react-dom";
-import Result from "@/components/Result";
-
-const initialState = {
-  success: false,
-  message: "",
-};
-
 
 
 const Page = () => {
-  const [state, formAction] = useFormState(createUser, initialState);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess(false);
+
+    const formData = new FormData(e.currentTarget);
+
+    try {
+      const result = await createUser(
+        { success: false, message: "" },
+        formData
+      );
+
+      if (result.success) {
+        setSuccess(true);
+        setTimeout(() => {
+          router.push("/login");
+        }, 1500);
+      } else {
+        setError(result.message);
+      }
+    } catch {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="items-center  min-h-screen align-center justify-center flex flex-col">
-      <div className="border border-amber-50 p-10 rounded-xl">
-        <form action={formAction}>
-          <h1 className="text-4xl font-semibold">Signup</h1>
+    <div className="items-center min-h-screen align-center justify-center flex flex-col">
+      <div className="border border-amber-50 p-10 rounded-xl w-96">
+        <form onSubmit={handleSubmit}>
+          <h1 className="text-4xl font-semibold mb-6">Sign Up</h1>
+
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {success && (
+            <p className="text-green-500 mb-4">
+              Account created! Redirecting to login...
+            </p>
+          )}
+
           <h3 className="text-2xl mt-7">Email</h3>
           <input
-            type="text"
+            type="email"
             name="email"
-            className="border border-amber-50 mt-2 text-lg p-2 rounded-lg"
-            placeholder="Password"
+            className="border border-amber-50 mt-2 text-lg p-2 rounded-lg w-full"
+            placeholder="your@email.com"
             required
+            disabled={loading}
           />
+
           <h3 className="text-2xl mt-5">Password</h3>
           <input
             type="password"
             name="password"
-            className="border border-amber-50 mt-2 text-lg p-2 rounded-lg"
+            className="border border-amber-50 mt-2 text-lg p-2 rounded-lg w-full"
             placeholder="Password"
             required
+            disabled={loading}
           />
-          <br />
+
           <button
             type="submit"
-            className="bg-amber-50 text-stone-950 rounded-xl mt-10 font-bold px-8 py-4 text-xl cursor-pointer"
+            disabled={loading}
+            className="bg-amber-50 text-stone-950 rounded-xl mt-8 font-bold px-8 py-3 text-xl cursor-pointer w-full disabled:opacity-50"
           >
-            Submit
+            {loading ? "Creating account..." : "Sign Up"}
           </button>
         </form>
-      </div>
-      <Result success={state.success} message={state.message}/>
-      <div className="text-xl mt-6">
-        Already have an account?
-        <Link href="/login" className="font-extrabold ml-2">
-          Login
-        </Link>
+
+        <div className="text-lg mt-6 text-center">
+          Already have an account?
+          <Link href="/login" className="font-extrabold ml-2 text-amber-50">
+            Login
+          </Link>
+        </div>
       </div>
     </div>
   );
